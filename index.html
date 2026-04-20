@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HabitFlow • Трекер привычек</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600&display=swap');
+    
+    :root {
+      --primary: #10b981;
+    }
+    
+    .dark {
+      --primary: #10b981;
+    }
+    
+    * {
+      transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+      transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+      transition-duration: 150ms;
+    }
+    
+    .habit-card {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .habit-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 15px -3px rgb(16 185 129);
+    }
+    
+    .calendar-day {
+      transition: all 0.2s ease;
+    }
+    
+    .calendar-day.completed {
+      background-color: #10b981;
+      color: white;
+      font-weight: 600;
+    }
+    
+    .calendar-day.missed {
+      background-color: #ef4444;
+      color: white;
+    }
+    
+    .streak-flame {
+      animation: flame 1.5s infinite alternate;
+    }
+    
+    @keyframes flame {
+      from { transform: scale(1); }
+      to { transform: scale(1.15); }
+    }
+    
+    .modal {
+      animation: modalPop 0.3s ease forwards;
+    }
+    
+    @keyframes modalPop {
+      0% { opacity: 0; transform: scale(0.95); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+  </style>
+</head>
+<body class="bg-zinc-950 text-white dark:bg-white dark:text-zinc-900 font-sans">
+  <!-- HEADER -->
+  <header class="border-b border-white/10 dark:border-zinc-200 bg-white/5 dark:bg-white/80 backdrop-blur-lg sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
+      <div class="flex items-center gap-x-3">
+        <div class="w-9 h-9 bg-emerald-500 rounded-2xl flex items-center justify-center text-white text-2xl">🌱</div>
+        <h1 class="text-3xl font-semibold tracking-[-1px]" style="font-family: 'Space Grotesk', sans-serif;">HabitFlow</h1>
+      </div>
+      
+      <div class="flex items-center gap-x-6">
+        <!-- Кнопка добавления -->
+        <button onclick="showAddHabitModal()" 
+                class="flex items-center gap-x-2 bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-3 rounded-3xl font-medium text-sm uppercase tracking-widest">
+          <i class="fa-solid fa-plus"></i>
+          <span>Новая привычка</span>
+        </button>
+        
+        <!-- Переключатель темы -->
+        <button onclick="toggleTheme()" class="w-10 h-10 flex items-center justify-center text-xl rounded-2xl hover:bg-white/10 dark:hover:bg-zinc-100">
+          <i id="theme-icon" class="fa-solid fa-moon"></i>
+        </button>
+        
+        <!-- Профиль / очки -->
+        <div class="flex items-center gap-x-2 bg-white/10 dark:bg-zinc-100 px-5 py-2 rounded-3xl">
+          <i class="fa-solid fa-fire text-orange-400 text-xl"></i>
+          <span id="total-points" class="font-semibold text-lg">1240</span>
+          <span class="text-xs text-white/60 dark:text-zinc-500">очков</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="max-w-7xl mx-auto px-6 flex gap-8 py-8">
+    
+    <!-- SIDEBAR: Список привычек -->
+    <div class="w-80 hidden lg:flex flex-col bg-white/5 dark:bg-white/80 backdrop-blur-xl border border-white/10 dark:border-zinc-200 rounded-3xl p-6 h-fit sticky top-24">
+      <h2 class="uppercase text-xs tracking-[1px] font-medium mb-4 text-white/60 dark:text-zinc-500">Мои привычки</h2>
+      
+      <div id="habits-list" class="space-y-2 max-h-[calc(100vh-200px)] overflow-auto pr-2"></div>
+      
+      <div class="mt-auto pt-6 border-t border-white/10 dark:border-zinc-200 text-xs text-white/40 dark:text-zinc-400 flex justify-between">
+        <div>Сегодня</div>
+        <div id="today-date" class="font-medium"></div>
+      </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="flex-1">
+      
+      <!-- ТАБЫ -->
+      <div class="flex border-b border-white/10 dark:border-zinc-200 mb-8">
+        <button onclick="switchTab(0)" id="tab-0"
+                class="tab-button px-8 py-4 font-medium border-b-2 border-transparent hover:text-emerald-400 active">Сегодня</button>
+        <button onclick="switchTab(1)" id="tab-1"
+                class="tab-button px-8 py-4 font-medium border-b-2 border-transparent hover:text-emerald-400">Календарь</button>
+        <button onclick="switchTab(2)" id="tab-2"
+                class="tab-button px-8 py-4 font-medium border-b-2 border-transparent hover:text-emerald-400">Статистика</button>
+      </div>
+
+      <!-- ВКЛАДКА 0: СЕГОДНЯ -->
+      <div id="view-0" class="tab-view">
+        <h2 class="text-4xl font-semibold mb-6">Что нужно сделать сегодня?</h2>
+        <div id="today-habits" class="grid md:grid-cols-2 gap-4"></div>
+      </div>
+
+      <!-- ВКЛАДКА 1: КАЛЕНДАРЬ -->
+      <div id="view-1" class="tab-view hidden">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-3xl font-semibold" id="calendar-title">Апрель 2026</h2>
+          <div class="flex gap-2">
+            <button onclick="prevMonth()" class="px-4 py-2 hover:bg-white/10 dark:hover:bg-zinc-100 rounded-2xl"><i class="fa-solid fa-chevron-left"></i></button>
+            <button onclick="nextMonth()" class="px-4 py-2 hover:bg-white/10 dark:hover:bg-zinc-100 rounded-2xl"><i class="fa-solid fa-chevron-right"></i></button>
+          </div>
+        </div>
+        
+        <div id="calendar-grid" class="grid grid-cols-7 gap-1 text-center text-sm"></div>
+        
+        <div class="mt-8 flex items-center justify-center gap-x-8 text-xs">
+          <div class="flex items-center gap-x-2">
+            <div class="w-4 h-4 bg-emerald-500 rounded"></div>
+            <span>Выполнено</span>
+          </div>
+          <div class="flex items-center gap-x-2">
+            <div class="w-4 h-4 bg-red-500 rounded"></div>
+            <span>Пропущено</span>
+          </div>
+          <div class="flex items-center gap-x-2">
+            <div class="w-4 h-4 bg-white/10 dark:bg-zinc-200 rounded"></div>
+            <span>Нет данных</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ВКЛАДКА 2: СТАТИСТИКА -->
+      <div id="view-2" class="tab-view hidden">
+        <h2 class="text-3xl font-semibold mb-8">Общая статистика</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="bg-white/5 dark:bg-white/80 backdrop-blur-xl rounded-3xl p-8">
+            <div class="text-emerald-400 text-sm font-medium mb-2">Текущий streak</div>
+            <div id="global-streak" class="text-6xl font-bold flex items-baseline gap-x-2">12 <span class="text-2xl text-orange-400 streak-flame">🔥</span></div>
+            <p class="text-xs text-white/50 dark:text-zinc-500 mt-4">дней подряд</p>
+          </div>
+          
+          <div class="bg-white/5 dark:bg-white/80 backdrop-blur-xl rounded-3xl p-8">
+            <div class="text-emerald-400 text-sm font-medium mb-2">Выполнено за 30 дней</div>
+            <div id="completion-30" class="text-6xl font-bold">87%</div>
+            <div class="h-2 bg-white/10 dark:bg-zinc-200 rounded-full mt-6 overflow-hidden">
+              <div id="completion-bar" class="h-2 bg-emerald-500 rounded-full w-[87%]"></div>
+            </div>
+          </div>
+          
+          <div class="bg-white/5 dark:bg-white/80 backdrop-blur-xl rounded-3xl p-8 flex flex-col">
+            <div class="text-emerald-400 text-sm font-medium mb-2">Всего привычек</div>
+            <div id="total-habits-count" class="text-6xl font-bold">8</div>
+            <div class="mt-auto text-xs flex items-center justify-between">
+              <span class="text-white/50 dark:text-zinc-500">Активных</span>
+              <span id="active-habits" class="font-semibold text-emerald-400">6</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="mt-12">
+          <h3 class="text-lg font-medium mb-4">Прогресс по привычкам</h3>
+          <div id="stats-list" class="space-y-6"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- МОДАЛКА ДОБАВЛЕНИЯ / РЕДАКТИРОВАНИЯ -->
+  <div onclick="if(event.target.id === 'habit-modal') hideHabitModal()" 
+       id="habit-modal"
+       class="hidden fixed inset-0 bg-black/70 z-[10000] flex items-center justify-center">
+    <div onclick="event.stopImmediatePropagation()" 
+         class="modal bg-white dark:bg-zinc-900 w-full max-w-lg mx-4 rounded-3xl p-8 text-zinc-900 dark:text-white">
+      <h3 id="modal-title" class="text-2xl font-semibold mb-6">Новая привычка</h3>
+      
+      <form id="habit-form" onsubmit="handleHabitSubmit(event)">
+        <input type="hidden" id="edit-id">
+        
+        <div class="mb-6">
+          <label class="block text-sm font-medium mb-2">Название привычки</label>
+          <input id="habit-name" type="text" required 
+                 class="w-full px-5 py-4 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-white/10 rounded-2xl focus:outline-none focus:border-emerald-500">
+        </div>
+        
+        <div class="mb-6">
+          <label class="block text-sm font-medium mb-2">Описание (необязательно)</label>
+          <textarea id="habit-desc" rows="2"
+                    class="w-full px-5 py-4 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-white/10 rounded-2xl focus:outline-none focus:border-emerald-500"></textarea>
+        </div>
+        
+        <div class="mb-8">
+          <label class="block text-sm font-medium mb-3">Периодичность</label>
+          <div class="flex gap-2">
+            <button type="button" onclick="setFrequency(this, 'daily')" 
+                    id="freq-daily"
+                    class="freq-btn flex-1 py-4 text-center rounded-2xl border border-emerald-500 text-emerald-500">Ежедневно</button>
+            <button type="button" onclick="setFrequency(this, 'weekly')" 
+                    id="freq-weekly"
+                    class="freq-btn flex-1 py-4 text-center rounded-2xl border">По дням недели</button>
+          </div>
+          
+          <!-- Дни недели (показываются только при weekly) -->
+          <div id="weekdays-selector" class="hidden grid grid-cols-7 gap-2 mt-6">
+            <div onclick="toggleWeekday(0)" data-day="0" class="weekday-btn text-center py-2 rounded-2xl text-xs border">Пн</div>
+            <div onclick="toggleWeekday(1)" data-day="1" class="weekday-btn text-center py-2 rounded-2xl text-xs border">Вт</div>
+            <div onclick="toggleWeekday(2)" data-day="2" class="weekday-btn text-center py-2 rounded-2xl text-xs border">Ср</div>
+            <div onclick="toggleWeekday(3)" data-day="3" class="weekday-btn text-center py-2 rounded-2xl text-xs border">Чт</div>
+            <div onclick="toggleWeekday(4)" data-day="4" class="weekday-btn text-center py-2 rounded-2xl text-xs border">Пт</div>
+            <div onclick="toggleWeekday(5)" data-day="5" class="weekday-btn text-center py-2 rounded-2xl text-xs border">Сб</div>
+            <div onclick="toggleWeekday(6)" data-day="6" class="weekday-btn text-center py-2 rounded-2xl text-xs border">Вс</div>
+          </div>
+        </div>
+        
+        <div class="flex gap-4">
+          <button type="button" onclick="hideHabitModal()" 
+                  class="flex-1 py-5 border border-white/20 dark:border-zinc-700 rounded-3xl font-medium">Отмена</button>
+          <button type="submit" 
+                  class="flex-1 py-5 bg-emerald-500 text-white rounded-3xl font-medium">Сохранить</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div id="toast" onclick="this.classList.add('hidden')" 
+       class="hidden fixed bottom-6 right-6 bg-emerald-500 text-white px-6 py-4 rounded-3xl shadow-2xl flex items-center gap-x-3">
+    <i class="fa-solid fa-check-circle"></i>
+    <span id="toast-text" class="font-medium"></span>
+  </div>
+
+  <script>
+    // ====================== ДАННЫЕ ======================
+    let habits = []
+    let currentDate = new Date()
+    let selectedHabitId = null
+    let currentMonth = currentDate.getMonth()
+    let currentYear = currentDate.getFullYear()
+    let selectedFrequency = 'daily'
+    let selectedWeekdays = []
+
+    // ====================== LOCALSTORAGE ======================
+    function loadHabits() {
+      const saved = localStorage.getItem('habitflow_habits')
+      if (saved) {
+        habits = JSON.parse(saved)
+      } else {
+        // Дефолтные привычки
+        habits = [
+          {
+            id: 1,
+            name: "Выпить 2 литра воды",
+            desc: "Здоровье и энергия",
+            frequency: "daily",
+            completions: {},
+            points: 10
+          },
+          {
+            id: 2,
+            name: "Прогулка 30 минут",
+            desc: "",
+            frequency: [1, 2, 3, 4, 5],
+            completions: {},
+            points: 20
+          },
+          {
+            id: 3,
+            name: "Читать 20 страниц",
+            desc: "Личностный рост",
+            frequency: "daily",
+            completions: {},
+            points: 15
+          }
+        ]
+        saveHabits()
+      }
+    }
+
+    function saveHabits() {
+      localStorage.setItem('habitflow_habits', JSON.stringify(habits))
+    }
+
+    // ====================== УТИЛИТЫ ДАТ ======================
+    function formatDate(date) {
+      return date.toISOString().split('T')[0]
+    }
+
+    function getToday() {
+      return formatDate(new Date())
+    }
+
+    function isHabitDue(habit, dateStr) {
+      const date = new Date(dateStr)
+      const dayOfWeek = date.getDay() // 0 = Sunday
+      
+      if (habit.frequency === 'daily') return true
+      
+      // массив дней недели (0=Вс, но в UI 0=Пн → сдвиг)
+      const adjustedDay = (dayOfWeek + 6) % 7 // превращаем 0=Вс в 6, 1=Пн в 0 и т.д.
+      return habit.frequency.includes(adjustedDay)
+    }
+
+    function calculateStreak(habit) {
+      let streak = 0
+      let checkDate = new Date()
+      
+      while (true) {
+        const dateStr = formatDate(checkDate)
+        if (habit.completions[dateStr] === true) {
+          streak++
+          checkDate.setDate(checkDate.getDate() - 1)
+        } else {
+          break
+        }
+      }
+      return streak
+    }
+
+    function getCompletionPercent(habit) {
+      const today = new Date()
+      let count = 0
+      let total = 0
+      
+      for (let i = 0; i < 30; i++) {
+        const d = new Date(today)
+        d.setDate(d.getDate() - i)
+        const dateStr = formatDate(d)
+        
+        if (isHabitDue(habit, dateStr)) {
+          total++
+          if (habit.completions[dateStr] === true) count++
+        }
+      }
+      return total ? Math.round((count / total) * 100) : 0
+    }
+
+    // ====================== РЕНДЕР ======================
+    function renderHabitsList() {
+      const container = document.getElementById('habits-list')
+      container.innerHTML = ''
+      
+      habits.forEach(h => {
+        const streak = calculateStreak(h)
+        const percent = getCompletionPercent(h)
+        
+        const el = document.createElement('div')
+        el.className = `habit-card flex items-center justify-between bg-white/10 dark:bg-white p-4 rounded-3xl cursor-pointer ${selectedHabitId === h.id ? 'ring-2 ring-emerald-500' : ''}`
+        el.innerHTML = `
+          <div class="flex items-center gap-x-3">
+            <input type="checkbox" 
+                   onchange="toggleTodayCompletion(${h.id}, event)"
+                   ${h.completions[getToday()] ? 'checked' : ''}
+                   class="w-5 h-5 accent-emerald-500">
+            <div>
+              <div class="font-medium">${h.name}</div>
+              ${h.desc ? `<div class="text-xs text-white/50 dark:text-zinc-500">${h.desc}</div>` : ''}
+            </div>
+          </div>
+          <div class="text-right">
+            <div class="text-xs flex items-center justify-end gap-x-1 text-orange-400">
+              ${streak} <i class="fa-solid fa-fire"></i>
+            </div>
+            <div class="text-[10px] text-emerald-400">${percent}%</div>
+          </div>
+        `
+        el.onclick = (e) => {
+          if (e.target.type !== 'checkbox') {
+            selectedHabitId = h.id
+            renderAll()
+          }
+        }
+        container.appendChild(el)
+      })
+      
+      if (habits.length === 0) {
+        container.innerHTML = `<p class="text-white/40 text-center py-8">Пока нет привычек.<br>Добавьте первую!</p>`
+      }
+    }
+
+    function renderTodayHabits() {
+      const container = document.getElementById('today-habits')
+      container.innerHTML = ''
+      
+      const today = getToday()
+      
+      habits.forEach(h => {
+        if (!isHabitDue(h, today)) return
+        
+        const completed = !!h.completions[today]
+        
+        const card = document.createElement('div')
+        card.className = `habit-card bg-white/5 dark:bg-white p-6 rounded-3xl flex justify-between items-center ${completed ? 'opacity-75' : ''}`
+        card.innerHTML = `
+          <div>
+            <div class="font-semibold text-xl">${h.name}</div>
+            ${h.desc ? `<p class="text-sm text-white/60 dark:text-zinc-500">${h.desc}</p>` : ''}
+            <div class="flex items-center gap-x-2 mt-4 text-xs">
+              <span class="px-3 py-1 bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300 rounded-3xl">Сегодня</span>
+              ${completed ? `<span class="text-emerald-400">✓ Выполнено</span>` : ''}
+            </div>
+          </div>
+          
+          <button onclick="toggleTodayCompletion(${h.id}); event.stopImmediatePropagation()" 
+                  class="w-12 h-12 flex items-center justify-center text-3xl ${completed ? 'text-emerald-400' : 'text-white/30 dark:text-zinc-300'}">
+            ${completed ? '✅' : '⬜'}
+          </button>
+        `
+        container.appendChild(card)
+      })
+      
+      if (container.children.length === 0) {
+        container.innerHTML = `<div class="col-span-2 text-center py-12 text-white/40">На сегодня всё! Отличная работа 🌟</div>`
+      }
+    }
+
+    function renderCalendar() {
+      const container = document.getElementById('calendar-grid')
+      container.innerHTML = ''
+      
+      // Заголовок месяца
+      const monthNames = ["Январь","Февраль","Март","Апрель","Май","Июнь","Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"]
+      document.getElementById('calendar-title').textContent = `${monthNames[currentMonth]} ${currentYear}`
+      
+      // Дни недели
+      const weekdays = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс']
+      weekdays.forEach(day => {
+        const div = document.createElement('div')
+        div.className = 'text-xs font-medium text-white/40 dark:text-zinc-400 py-2'
+        div.textContent = day
+        container.appendChild(div)
+      })
+      
+      // Первый день месяца
+      const firstDay = new Date(currentYear, currentMonth, 1).getDay()
+      const adjustedFirst = (firstDay + 6) % 7 // понедельник = 0
+      
+      // Пустые ячейки
+      for (let i = 0; i < adjustedFirst; i++) {
+        const empty = document.createElement('div')
+        empty.className = 'h-10'
+        container.appendChild(empty)
+      }
+      
+      const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate()
+      
+      const habit = habits.find(h => h.id === selectedHabitId) || habits[0]
+      
+      for (let day = 1; day <= daysInMonth; day++) {
+        const dateObj = new Date(currentYear, currentMonth, day)
+        const dateStr = formatDate(dateObj)
+        
+        const cell = document.createElement('div')
+        cell.className = `calendar-day flex items-center justify-center h-10 rounded-2xl text-sm cursor-pointer hover:ring-2 hover:ring-emerald-400`
+        
+        if (habit && habit.completions[dateStr] === true) {
+          cell.classList.add('completed')
+        } else if (habit && isHabitDue(habit, dateStr) && habit.completions[dateStr] === false) {
+          cell.classList.add('missed')
+        } else if (habit && isHabitDue(habit, dateStr)) {
+          cell.style.backgroundColor = 'rgba(16,185,129,0.15)'
+          cell.style.color = '#10b981'
+        }
+        
+        cell.textContent = day
+        cell.onclick = () => toggleCompletionInCalendar(habit ? habit.id : null, dateStr)
+        container.appendChild(cell)
+      }
+    }
+
+    function renderStats() {
+      // Глобальный streak
+      let maxStreak = 0
+      habits.forEach(h => {
+        const s = calculateStreak(h)
+        if (s > maxStreak) maxStreak = s
+      })
+      document.getElementById('global-streak').innerHTML = `${maxStreak} <span class="text-2xl text-orange-400 streak-flame">🔥</span>`
+      
+      // Общий процент
+      let totalCompleted = 0
+      let totalPossible = 0
+      
+      habits.forEach(h => {
+        const p = getCompletionPercent(h)
+        totalCompleted += p
+      })
+      
+      const avg = habits.length ? Math.round(totalCompleted / habits.length) : 0
+      document.getElementById('completion-30').textContent = `${avg}%`
+      document.getElementById('completion-bar').style.width = `${avg}%`
+      
+      // Количество привычек
+      document.getElementById('total-habits-count').textContent = habits.length
+      document.getElementById('active-habits').textContent = habits.length
+      
+      // Список прогресса
+      const container = document.getElementById('stats-list')
+      container.innerHTML = ''
+      
+      habits.forEach(h => {
+        const percent = getCompletionPercent(h)
+        const streak = calculateStreak(h)
+        
+        const row = document.createElement('div')
+        row.className = 'flex items-center justify-between bg-white/5 dark:bg-white/80 backdrop-blur-xl rounded-3xl px-6 py-5'
+        row.innerHTML = `
+          <div class="flex items-center gap-x-4">
+            <div class="font-medium">${h.name}</div>
+          </div>
+          <div class="flex items-center gap-x-8">
+            <div class="text-right">
+              <div class="text-emerald-400">${percent}%</div>
+              <div class="text-xs">за 30 дней</div>
+            </div>
+            <div class="text-right">
+              <div class="flex items-center gap-x-1 text-orange-400">${streak} <i class="fa-solid fa-fire"></i></div>
+              <div class="text-xs">streak</div>
+            </div>
+          </div>
+        `
+        container.appendChild(row)
+      })
+    }
+
+    function renderAll() {
+      renderHabitsList()
+      renderTodayHabits()
+      renderCalendar()
+      renderStats()
+    }
+
+    // ====================== ЛОГИКА ======================
+    function toggleTodayCompletion(id, e) {
+      const habit = habits.find(h => h.id === id)
+      if (!habit) return
+      
+      const today = getToday()
+      
+      if (habit.completions[today]) {
+        delete habit.completions[today]
+      } else {
+        habit.completions[today] = true
+        // Начисление очков
+        addPoints(habit.points || 10)
+      }
+      
+      saveHabits()
+      renderAll()
+      
+      if (e) e.stopImmediatePropagation()
+    }
+
+    function toggleCompletionInCalendar(id, dateStr) {
+      if (!id) return
+      const habit = habits.find(h => h.id === id)
+      if (!habit) return
+      
+      if (habit.completions[dateStr]) {
+        delete habit.completions[dateStr]
+      } else {
+        habit.completions[dateStr] = true
+        addPoints(habit.points || 10)
+      }
+      
+      saveHabits()
+      renderCalendar()
+      renderStats()
+    }
+
+    function addPoints(amount) {
+      let total = parseInt(localStorage.getItem('habitflow_points') || '0')
+      total += amount
+      localStorage.setItem('habitflow_points', total)
+      document.getElementById('total-points').textContent = total
+      showToast(`+${amount} очков!`)
+    }
+
+    // ====================== МОДАЛКА ======================
+    function showAddHabitModal(editHabit = null) {
+      const modal = document.getElementById('habit-modal')
+      modal.classList.remove('hidden')
+      modal.classList.add('flex')
+      
+      document.getElementById('modal-title').textContent = editHabit ? 'Редактировать привычку' : 'Новая привычка'
+      
+      if (editHabit) {
+        document.getElementById('edit-id').value = editHabit.id
+        document.getElementById('habit-name').value = editHabit.name
+        document.getElementById('habit-desc').value = editHabit.desc || ''
+        
+        selectedFrequency = typeof editHabit.frequency === 'string' ? editHabit.frequency : 'weekly'
+        selectedWeekdays = Array.isArray(editHabit.frequency) ? editHabit.frequency : []
+        
+        document.getElementById('freq-daily').classList.toggle('border-emerald-500', selectedFrequency === 'daily')
+        document.getElementById('freq-weekly').classList.toggle('border-emerald-500', selectedFrequency === 'weekly')
+        
+        document.getElementById('weekdays-selector').classList.toggle('hidden', selectedFrequency !== 'weekly')
+        
+        // Подсветка выбранных дней
+        document.querySelectorAll('.weekday-btn').forEach(el => {
+          const day = parseInt(el.dataset.day)
+          el.classList.toggle('bg-emerald-500', selectedWeekdays.includes(day))
+          el.classList.toggle('text-white', selectedWeekdays.includes(day))
+        })
+      } else {
+        document.getElementById('habit-form').reset()
+        document.getElementById('edit-id').value = ''
+        selectedFrequency = 'daily'
+        selectedWeekdays = []
+        document.getElementById('weekdays-selector').classList.add('hidden')
+      }
+    }
+
+    function hideHabitModal() {
+      const modal = document.getElementById('habit-modal')
+      modal.classList.add('hidden')
+      modal.classList.remove('flex')
+    }
+
+    function setFrequency(btn, type) {
+      selectedFrequency = type
+      
+      document.querySelectorAll('.freq-btn').forEach(b => b.classList.remove('border-emerald-500'))
+      btn.classList.add('border-emerald-500')
+      
+      document.getElementById('weekdays-selector').classList.toggle('hidden', type !== 'weekly')
+    }
+
+    function toggleWeekday(day) {
+      const index = selectedWeekdays.indexOf(day)
+      if (index > -1) {
+        selectedWeekdays.splice(index, 1)
+      } else {
+        selectedWeekdays.push(day)
+      }
+      
+      const el = document.querySelector(`.weekday-btn[data-day="${day}"]`)
+      if (el) {
+        el.classList.toggle('bg-emerald-500')
+        el.classList.toggle('text-white')
+      }
+    }
+
+    function handleHabitSubmit(e) {
+      e.preventDefault()
+      
+      const id = document.getElementById('edit-id').value
+      const name = document.getElementById('habit-name').value.trim()
+      const desc = document.getElementById('habit-desc').value.trim()
+      
+      let frequency = selectedFrequency === 'daily' ? 'daily' : [...selectedWeekdays]
+      
+      if (id) {
+        // Редактирование
+        const habit = habits.find(h => h.id === parseInt(id))
+        if (habit) {
+          habit.name = name
+          habit.desc = desc
+          habit.frequency = frequency
+        }
+      } else {
+        // Создание
+        const newHabit = {
+          id: Date.now(),
+          name,
+          desc,
+          frequency,
+          completions: {},
+          points: 10
+        }
+        habits.push(newHabit)
+      }
+      
+      saveHabits()
+      hideHabitModal()
+      renderAll()
+      showToast(id ? 'Привычка обновлена' : 'Привычка добавлена 🎉')
+    }
+
+    function deleteHabit(id) {
+      if (!confirm('Удалить привычку?')) return
+      habits = habits.filter(h => h.id !== id)
+      if (selectedHabitId === id) selectedHabitId = null
+      saveHabits()
+      renderAll()
+    }
+
+    // ====================== ТАБЫ ======================
+    function switchTab(n) {
+      document.querySelectorAll('.tab-button').forEach((el, i) => {
+        el.classList.toggle('border-emerald-500', i === n)
+        el.classList.toggle('text-emerald-400', i === n)
+      })
+      
+      document.querySelectorAll('.tab-view').forEach(el => el.classList.add('hidden'))
+      document.getElementById(`view-${n}`).classList.remove('hidden')
+      
+      if (n === 1) renderCalendar()
+    }
+
+    // ====================== НАВИГАЦИЯ КАЛЕНДАРЯ ======================
+    function prevMonth() {
+      currentMonth--
+      if (currentMonth < 0) {
+        currentMonth = 11
+        currentYear--
+      }
+      renderCalendar()
+    }
+    
+    function nextMonth() {
+      currentMonth++
+      if (currentMonth > 11) {
+        currentMonth = 0
+        currentYear++
+      }
+      renderCalendar()
+    }
+
+    // ====================== ТЕМА ======================
+    function toggleTheme() {
+      document.documentElement.classList.toggle('dark')
+      const isDark = document.documentElement.classList.contains('dark')
+      document.getElementById('theme-icon').classList.toggle('fa-moon', !isDark)
+      document.getElementById('theme-icon').classList.toggle('fa-sun', isDark)
+      localStorage.setItem('habitflow_theme', isDark ? 'dark' : 'light')
+    }
+
+    // ====================== TOAST ======================
+    function showToast(text) {
+      const toast = document.getElementById('toast')
+      document.getElementById('toast-text').textContent = text
+      toast.style.display = 'flex'
+      setTimeout(() => {
+        toast.style.display = 'none'
+      }, 2800)
+    }
+
+    // ====================== ЗАПУСК ======================
+    function init() {
+      loadHabits()
+      
+      // Тема
+      if (localStorage.getItem('habitflow_theme') === 'dark' || 
+          (!localStorage.getItem('habitflow_theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark')
+        document.getElementById('theme-icon').className = 'fa-solid fa-sun'
+      }
+      
+      // Текущая дата
+      const dateEl = document.getElementById('today-date')
+      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }
+      dateEl.textContent = new Date().toLocaleDateString('ru-RU', options)
+      
+      // Очки
+      const points = localStorage.getItem('habitflow_points') || '1240'
+      document.getElementById('total-points').textContent = points
+      
+      renderAll()
+      
+      console.log('%c🚀 HabitFlow запущен. Полноценный трекер привычек готов!', 'color:#10b981; font-size:14px; font-weight:600')
+    }
+    
+    window.onload = init
+  </script>
+</body>
+</html>
