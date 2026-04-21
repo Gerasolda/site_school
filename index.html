@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -10,299 +11,309 @@
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600&display=swap');
     
     :root {
-  --bg: #0a0a0a;
-  --card: #111111;
-  --border: rgba(255,255,255,0.08);
-  --text: #ffffff;
-  --text-secondary: rgba(255,255,255,0.6);
-  --primary: #10b981;
-}
+      --bg: #0a0a0f;
+      --card: #16161e;
+      --border: rgba(255,255,255,0.1);
+      --text: #f1f1f3;
+      --text-secondary: #a3a3b0;
+      --primary: #10b981;
+      --accent: #22d3ee;
+    }
 
-.dark {
-  --bg: #ffffff;
-  --card: #f8fafc;
-  --border: #e5e7eb;
-  --text: #0a0a0a;
-  --text-secondary: #6b7280;
-}
-body {
-  background: var(--bg);
-  color: var(--text);
-}
+    .dark {
+      --bg: #f8f9fa;
+      --card: #ffffff;
+      --border: #e2e8f0;
+      --text: #111827;
+      --text-secondary: #64748b;
+    }
 
-.card {
-  background: var(--card);
-  border: 1px solid var(--border);
-}
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', system_ui, sans-serif;
+    }
 
-.text-secondary {
-  color: var(--text-secondary);
-}
+    .title-font {
+      font-family: 'Space Grotesk', sans-serif;
+    }
 
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.15);
+    }
+
+    .glass {
+      background: rgba(255,255,255,0.08);
+      backdrop-filter: blur(20px);
+    }
+
+    .dark .glass {
+      background: rgba(0,0,0,0.06);
+      backdrop-filter: blur(20px);
+    }
 
     * {
-      transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+      transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, transform, box-shadow;
       transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-      transition-duration: 150ms;
+      transition-duration: 200ms;
     }
-    
+
     .habit-card {
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
     
     .habit-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 15px -3px rgb(16 185 129);
+      transform: translateY(-6px) scale(1.02);
+      box-shadow: 0 30px 60px -15px rgb(16 185 129 / 0.25);
     }
 
-    .habit-card {
-  transition: all 0.25s ease;
-}
-
-.habit-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 25px rgba(16,185,129,0.15);
-}
-
-button {
-  transition: all 0.2s ease;
-}
-
-button:hover {
-  transform: translateY(-1px);
-}
-
-input, textarea {
-  transition: all 0.2s ease;
-}
-
-    
-    .calendar-day {
-      transition: all 0.2s ease;
-    }
-    .calendar-day {
-  border-radius: 12px;
-  font-weight: 500;
-}
-
-.calendar-day:hover {
-  transform: scale(1.05);
-}
-
-    
-    .calendar-day.completed {
-      background-color: #10b981;
-      color: white;
-      font-weight: 600;
-    }
-    
-    .calendar-day.missed {
-      background-color: #ef4444;
-      color: white;
-    }
-    
-    .streak-flame {
-      animation: flame 1.5s infinite alternate;
-    }
-    
-    @keyframes flame {
-      from { transform: scale(1); }
-      to { transform: scale(1.15); }
-    }
-
-    
     .modal {
-      animation: modalPop 0.3s ease forwards;
+      animation: modalPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
     }
     
     @keyframes modalPop {
-      0% { opacity: 0; transform: scale(0.95); }
-      100% { opacity: 1; transform: scale(1); }
+      0% { opacity: 0; transform: scale(0.95) translateY(30px); }
+      100% { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .quote {
+      position: relative;
+    }
+    .quote::before {
+      content: '“';
+      position: absolute;
+      top: -20px;
+      left: -15px;
+      font-size: 110px;
+      line-height: 1;
+      opacity: 0.08;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    .streak-flame {
+      animation: flame 1.4s infinite alternate ease-in-out;
+    }
+    
+    @keyframes flame {
+      from { transform: scale(1) rotate(-10deg); }
+      to { transform: scale(1.2) rotate(10deg); }
+    }
+
+    .calendar-day {
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      border-radius: 18px;
+      font-weight: 600;
+    }
+    .calendar-day:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.3);
+    }
+
+    /* Улучшенная читаемость */
+    input, textarea {
+      font-size: 1.1rem;
+      line-height: 1.4;
     }
   </style>
 </head>
 <body class="font-sans transition-colors duration-300">
 
   <!-- HEADER -->
-  <header class="sticky top-0 z-50 backdrop-blur-xl border-b" style="background: var(--card); border-color: var(--border);">
-    <div class="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
-      <div class="flex items-center gap-x-3">
-        <div class="w-9 h-9 bg-emerald-500 rounded-2xl flex items-center justify-center text-white text-2xl">🌱</div>
-        <h1 class="text-3xl font-semibold tracking-[-1px]" style="font-family: 'Space Grotesk', sans-serif;">HabitFlow</h1>
+  <header class="sticky top-0 z-50 backdrop-blur-3xl border-b shadow-xl" style="background: var(--card); border-color: var(--border);">
+    <div class="max-w-7xl mx-auto px-8 py-6 flex items-center justify-between">
+      <div class="flex items-center gap-x-4">
+        <div class="w-11 h-11 bg-gradient-to-br from-emerald-400 via-cyan-400 to-violet-400 rounded-3xl flex items-center justify-center text-4xl shadow-2xl">🌱</div>
+        <div>
+          <h1 class="text-4xl font-semibold tracking-[-2px] title-font">HabitFlow</h1>
+          <p class="text-emerald-400 text-sm tracking-widest -mt-1">привычки, которые меняют жизнь</p>
+        </div>
       </div>
       
       <div class="flex items-center gap-x-6">
-        <!-- Кнопка добавления -->
         <button onclick="showAddHabitModal()" 
-                class="flex items-center gap-x-2 bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-3 rounded-3xl font-medium text-sm uppercase tracking-widest">
+                class="flex items-center gap-x-3 bg-gradient-to-r from-emerald-500 to-cyan-400 hover:from-emerald-600 hover:to-cyan-500 text-white px-8 py-4 rounded-3xl font-semibold text-base shadow-2xl hover:shadow-emerald-500/40">
           <i class="fa-solid fa-plus"></i>
           <span>Новая привычка</span>
         </button>
         
-        <!-- Переключатель темы -->
-        <button onclick="toggleTheme()" class="w-10 h-10 flex items-center justify-center text-xl rounded-2xl hover:bg-white/10 dark:hover:bg-zinc-100">
+        <button onclick="toggleTheme()" class="w-12 h-12 flex items-center justify-center text-3xl rounded-3xl hover:bg-white/10 dark:hover:bg-zinc-200/80">
           <i id="theme-icon" class="fa-solid fa-moon"></i>
         </button>
         
-        <!-- Профиль / очки -->
-        <div class="flex items-center gap-x-2 bg-white/10 dark:bg-zinc-100 px-5 py-2 rounded-3xl">
-          <i class="fa-solid fa-fire text-orange-400 text-xl"></i>
-          <span id="total-points" class="font-semibold text-lg">1240</span>
-          <span class="text-xs text-white/60 dark:text-zinc-500">очков</span>
+        <div onclick="switchTab(2)" 
+             class="glass flex items-center gap-x-4 px-7 py-3 rounded-3xl cursor-pointer border border-white/10 dark:border-emerald-400/30 hover:border-emerald-400">
+          <i class="fa-solid fa-fire text-orange-400 text-3xl streak-flame"></i>
+          <div>
+            <span id="total-points" class="font-semibold text-3xl">0</span>
+          </div>
+          <div class="text-xs leading-tight">
+            <div class="text-emerald-400 font-semibold">твой прогресс</div>
+            <div class="text-white/70 dark:text-zinc-700">очки + streak</div>
+          </div>
         </div>
       </div>
     </div>
   </header>
 
-  <div class="max-w-7xl mx-auto px-6 flex gap-8 py-8">
+  <div class="max-w-7xl mx-auto px-8 flex gap-8 py-10">
     
-    <!-- SIDEBAR: Список привычек -->
-    <div class="w-80 hidden lg:flex flex-col bg-white/5 dark:bg-white/80 backdrop-blur-xl border border-white/10 dark:border-zinc-200 rounded-3xl p-6 h-fit sticky top-24">
-      <h2 class="uppercase text-xs tracking-[1px] font-medium mb-4 text-white/60 dark:text-zinc-500">Мои привычки</h2>
+    <!-- SIDEBAR -->
+    <div class="w-80 hidden lg:flex flex-col glass border border-white/10 dark:border-zinc-200 rounded-3xl p-7 h-fit sticky top-28">
+      <h2 class="uppercase text-xs tracking-[2px] font-semibold text-emerald-400 mb-6">Мои привычки</h2>
+      <div id="habits-list" class="space-y-4 max-h-[calc(100vh-300px)] overflow-auto pr-3"></div>
       
-      <div id="habits-list" class="space-y-2 max-h-[calc(100vh-200px)] overflow-auto pr-2"></div>
+      <div class="mt-auto pt-8 border-t border-white/10 dark:border-zinc-200">
+        <div class="quote text-sm leading-relaxed text-white/60 dark:text-zinc-700 italic">
+          «Маленькие шаги каждый день приводят к большим изменениям.»
+        </div>
+      </div>
       
-      <div class="mt-auto pt-6 border-t border-white/10 dark:border-zinc-200 text-xs text-white/40 dark:text-zinc-400 flex justify-between">
+      <div class="mt-8 text-xs text-white/40 dark:text-zinc-500 flex justify-between">
         <div>Сегодня</div>
         <div id="today-date" class="font-medium"></div>
       </div>
     </div>
 
-    <!-- MAIN CONTENT -->
+    <!-- MAIN -->
     <div class="flex-1">
       
+      <!-- HERO -->
+      <div class="mb-12 bg-gradient-to-br from-emerald-500/10 via-cyan-400/10 to-transparent border border-emerald-400/20 dark:border-emerald-500/30 rounded-3xl p-10 flex flex-col lg:flex-row items-center gap-8 shadow-2xl">
+        <div class="flex-1">
+          <h2 class="text-5xl font-semibold title-font tracking-[-2px] leading-none">Строим привычки.<br>Меняем себя.</h2>
+          <p class="mt-6 text-xl text-secondary max-w-lg">Каждый день — это возможность стать лучше. HabitFlow делает привычки простыми и красивыми.</p>
+        </div>
+        <div class="quote flex-1 text-center lg:text-left text-2xl italic text-emerald-600 dark:text-emerald-400 font-medium">
+          «Маленькие привычки каждый день создают большую жизнь.»
+        </div>
+        <button onclick="switchTab(0); showAddHabitModal()" 
+                class="lg:ml-auto px-10 py-5 bg-white dark:bg-emerald-600 text-emerald-700 dark:text-white rounded-3xl font-semibold text-xl flex items-center gap-3 shadow-2xl hover:scale-105">
+          <i class="fa-solid fa-rocket"></i>
+          Начать сейчас
+        </button>
+      </div>
+
       <!-- ТАБЫ -->
-      <div class="flex border-b border-white/10 dark:border-zinc-200 mb-8">
-        <button onclick="switchTab(0)" id="tab-0"
-                class="tab-button px-8 py-4 font-medium border-b-2 border-transparent hover:text-emerald-400 active">Сегодня</button>
-        <button onclick="switchTab(1)" id="tab-1"
-                class="tab-button px-8 py-4 font-medium border-b-2 border-transparent hover:text-emerald-400">Календарь</button>
-        <button onclick="switchTab(2)" id="tab-2"
-                class="tab-button px-8 py-4 font-medium border-b-2 border-transparent hover:text-emerald-400">Статистика</button>
+      <div class="flex border-b border-white/10 dark:border-zinc-200 mb-10">
+        <button onclick="switchTab(0)" id="tab-0" class="tab-button px-10 py-5 font-semibold border-b-2 border-transparent hover:text-emerald-400 active">Сегодня</button>
+        <button onclick="switchTab(1)" id="tab-1" class="tab-button px-10 py-5 font-semibold border-b-2 border-transparent hover:text-emerald-400">Календарь</button>
+        <button onclick="switchTab(2)" id="tab-2" class="tab-button px-10 py-5 font-semibold border-b-2 border-transparent hover:text-emerald-400">Статистика</button>
       </div>
 
       <!-- ВКЛАДКА 0: СЕГОДНЯ -->
       <div id="view-0" class="tab-view">
-        <h2 class="text-4xl font-semibold mb-6">Что нужно сделать сегодня?</h2>
-        <div id="today-habits" class="grid md:grid-cols-2 gap-4"></div>
+        <h2 class="text-4xl font-semibold mb-2 title-font">Что делать сегодня?</h2>
+        <p class="text-secondary mb-8">Твой ежедневный вклад в лучшую версию себя</p>
+        <div id="today-habits" class="grid md:grid-cols-2 gap-6"></div>
       </div>
 
       <!-- ВКЛАДКА 1: КАЛЕНДАРЬ -->
       <div id="view-1" class="tab-view hidden">
-        <div class="flex items-center justify-between mb-6">
-          <h2 class="text-3xl font-semibold" id="calendar-title">Апрель 2026</h2>
-          <div class="flex gap-2">
-            <button onclick="prevMonth()" class="px-4 py-2 hover:bg-white/10 dark:hover:bg-zinc-100 rounded-2xl"><i class="fa-solid fa-chevron-left"></i></button>
-            <button onclick="nextMonth()" class="px-4 py-2 hover:bg-white/10 dark:hover:bg-zinc-100 rounded-2xl"><i class="fa-solid fa-chevron-right"></i></button>
+        <div class="flex items-center justify-between mb-8">
+          <h2 class="text-4xl font-semibold title-font" id="calendar-title">Апрель 2026</h2>
+          <div class="flex gap-3">
+            <button onclick="prevMonth()" class="w-12 h-12 flex items-center justify-center text-2xl hover:bg-white/10 dark:hover:bg-zinc-100 rounded-3xl"><i class="fa-solid fa-chevron-left"></i></button>
+            <button onclick="nextMonth()" class="w-12 h-12 flex items-center justify-center text-2xl hover:bg-white/10 dark:hover:bg-zinc-100 rounded-3xl"><i class="fa-solid fa-chevron-right"></i></button>
           </div>
         </div>
+        <div id="calendar-grid" class="grid grid-cols-7 gap-3 text-center"></div>
         
-        <div id="calendar-grid" class="grid grid-cols-7 gap-1 text-center text-sm"></div>
-        
-        <div class="mt-8 flex items-center justify-center gap-x-8 text-xs">
-          <div class="flex items-center gap-x-2">
-            <div class="w-4 h-4 bg-emerald-500 rounded"></div>
-            <span>Выполнено</span>
-          </div>
-          <div class="flex items-center gap-x-2">
-            <div class="w-4 h-4 bg-red-500 rounded"></div>
-            <span>Пропущено</span>
-          </div>
-          <div class="flex items-center gap-x-2">
-            <div class="w-4 h-4 bg-white/10 dark:bg-zinc-200 rounded"></div>
-            <span>Нет данных</span>
-          </div>
+        <div class="mt-12 flex justify-center gap-8 text-sm">
+          <div class="flex items-center gap-2"><div class="w-6 h-6 bg-gradient-to-br from-emerald-400 to-cyan-400 rounded-2xl"></div><span>Выполнено</span></div>
+          <div class="flex items-center gap-2"><div class="w-6 h-6 bg-red-500 rounded-2xl"></div><span>Пропущено</span></div>
+          <div class="flex items-center gap-2"><div class="w-6 h-6 border-2 border-emerald-400/30 rounded-2xl"></div><span>Ожидается</span></div>
         </div>
       </div>
 
       <!-- ВКЛАДКА 2: СТАТИСТИКА -->
       <div id="view-2" class="tab-view hidden">
-        <h2 class="text-3xl font-semibold mb-8">Общая статистика</h2>
+        <h2 class="text-4xl font-semibold title-font mb-3">Твой прогресс</h2>
+        <p class="text-secondary mb-8">Вот как далеко ты уже зашёл</p>
         
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div class="bg-white/5 dark:bg-white/80 backdrop-blur-xl rounded-3xl p-8">
-            <div class="text-emerald-400 text-sm font-medium mb-2">Текущий streak</div>
-            <div id="global-streak" class="text-6xl font-bold flex items-baseline gap-x-2">12 <span class="text-2xl text-orange-400 streak-flame">🔥</span></div>
-            <p class="text-xs text-white/50 dark:text-zinc-500 mt-4">дней подряд</p>
+          <div class="card rounded-3xl p-8">
+            <div class="flex items-center gap-2 text-emerald-400 mb-3"><i class="fa-solid fa-fire"></i> ТЕКУЩИЙ СТРИК</div>
+            <div id="global-streak" class="text-7xl font-bold flex items-baseline">12 <span class="text-5xl text-orange-400 streak-flame ml-3">🔥</span></div>
+            <p class="text-secondary mt-2">дней подряд</p>
           </div>
-          
-          <div class="bg-white/5 dark:bg-white/80 backdrop-blur-xl rounded-3xl p-8">
-            <div class="text-emerald-400 text-sm font-medium mb-2">Выполнено за 30 дней</div>
-            <div id="completion-30" class="text-6xl font-bold">87%</div>
-            <div class="h-2 bg-white/10 dark:bg-zinc-200 rounded-full mt-6 overflow-hidden">
-              <div id="completion-bar" class="h-2 bg-emerald-500 rounded-full w-[87%]"></div>
+          <div class="card rounded-3xl p-8">
+            <div class="text-emerald-400 mb-3">За последние 30 дней</div>
+            <div id="completion-30" class="text-7xl font-bold">87%</div>
+            <div class="h-3 mt-8 bg-white/10 dark:bg-zinc-200 rounded-3xl overflow-hidden">
+              <div id="completion-bar" class="h-3 bg-gradient-to-r from-emerald-400 to-cyan-400 w-[87%] rounded-3xl"></div>
             </div>
           </div>
-          
-          <div class="bg-white/5 dark:bg-white/80 backdrop-blur-xl rounded-3xl p-8 flex flex-col">
-            <div class="text-emerald-400 text-sm font-medium mb-2">Всего привычек</div>
-            <div id="total-habits-count" class="text-6xl font-bold">8</div>
-            <div class="mt-auto text-xs flex items-center justify-between">
-              <span class="text-white/50 dark:text-zinc-500">Активных</span>
-              <span id="active-habits" class="font-semibold text-emerald-400">6</span>
+          <div class="card rounded-3xl p-8 flex flex-col">
+            <div class="text-emerald-400 mb-3">Всего привычек</div>
+            <div id="total-habits-count" class="text-7xl font-bold">3</div>
+            <div class="mt-auto flex justify-between text-sm">
+              <span class="text-secondary">Активно</span>
+              <span id="active-habits" class="text-emerald-400 font-semibold">3</span>
             </div>
           </div>
         </div>
         
         <div class="mt-12">
-          <h3 class="text-lg font-medium mb-4">Прогресс по привычкам</h3>
-          <div id="stats-list" class="space-y-6"></div>
+          <h3 class="text-xl font-medium mb-6">Прогресс по привычкам</h3>
+          <div id="stats-list" class="space-y-5"></div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- МОДАЛКА ДОБАВЛЕНИЯ / РЕДАКТИРОВАНИЯ -->
+  <!-- МОДАЛКА (исправлена читаемость в светлой теме) -->
   <div onclick="if(event.target.id === 'habit-modal') hideHabitModal()" 
        id="habit-modal"
        class="hidden fixed inset-0 bg-black/70 z-[10000] flex items-center justify-center">
     <div onclick="event.stopImmediatePropagation()" 
-         class="modal bg-white dark:bg-zinc-900 w-full max-w-lg mx-4 rounded-3xl p-8 text-zinc-900 dark:text-white">
-      <h3 id="modal-title" class="text-2xl font-semibold mb-6">Новая привычка</h3>
+         class="modal card w-full max-w-lg mx-4 rounded-3xl p-10">
+      <h3 id="modal-title" class="text-3xl font-semibold title-font mb-1">Создать привычку</h3>
+      <p class="text-emerald-500 dark:text-emerald-600 mb-8">Одна привычка сегодня — новая версия тебя завтра</p>
       
       <form id="habit-form" onsubmit="handleHabitSubmit(event)">
         <input type="hidden" id="edit-id">
         
-        <div class="mb-6">
-          <label class="block text-sm font-medium mb-2">Название привычки</label>
+        <div class="mb-7">
+          <label class="block text-sm font-medium mb-2 text-secondary">Название привычки</label>
           <input id="habit-name" type="text" required 
-                 class="w-full px-5 py-4 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-white/10 rounded-2xl focus:outline-none focus:border-emerald-500">
+                 class="w-full px-6 py-5 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-white/20 rounded-3xl focus:outline-none focus:border-emerald-500 text-lg text-zinc-900 dark:text-white placeholder:text-secondary dark:placeholder:text-zinc-500">
         </div>
         
-        <div class="mb-6">
-          <label class="block text-sm font-medium mb-2">Описание (необязательно)</label>
-          <textarea id="habit-desc" rows="2"
-                    class="w-full px-5 py-4 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-white/10 rounded-2xl focus:outline-none focus:border-emerald-500"></textarea>
+        <div class="mb-7">
+          <label class="block text-sm font-medium mb-2 text-secondary">Описание (необязательно)</label>
+          <textarea id="habit-desc" rows="3"
+                    class="w-full px-6 py-5 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-white/20 rounded-3xl focus:outline-none focus:border-emerald-500 text-zinc-900 dark:text-white placeholder:text-secondary dark:placeholder:text-zinc-500"></textarea>
         </div>
         
         <div class="mb-8">
-          <label class="block text-sm font-medium mb-3">Периодичность</label>
+          <label class="block text-sm font-medium mb-3 text-secondary">Периодичность</label>
           <div class="flex gap-2">
             <button type="button" onclick="setFrequency(this, 'daily')" 
                     id="freq-daily"
-                    class="freq-btn flex-1 py-4 text-center rounded-2xl border border-emerald-500 text-emerald-500">Ежедневно</button>
+                    class="freq-btn flex-1 py-5 text-center rounded-3xl border-2 border-emerald-500 font-medium">Ежедневно</button>
             <button type="button" onclick="setFrequency(this, 'weekly')" 
                     id="freq-weekly"
-                    class="freq-btn flex-1 py-4 text-center rounded-2xl border">По дням недели</button>
+                    class="freq-btn flex-1 py-5 text-center rounded-3xl border font-medium">По дням недели</button>
           </div>
           
-          <!-- Дни недели (показываются только при weekly) -->
           <div id="weekdays-selector" class="hidden grid grid-cols-7 gap-2 mt-6">
-            <div onclick="toggleWeekday(0)" data-day="0" class="weekday-btn text-center py-2 rounded-2xl text-xs border">Пн</div>
-            <div onclick="toggleWeekday(1)" data-day="1" class="weekday-btn text-center py-2 rounded-2xl text-xs border">Вт</div>
-            <div onclick="toggleWeekday(2)" data-day="2" class="weekday-btn text-center py-2 rounded-2xl text-xs border">Ср</div>
-            <div onclick="toggleWeekday(3)" data-day="3" class="weekday-btn text-center py-2 rounded-2xl text-xs border">Чт</div>
-            <div onclick="toggleWeekday(4)" data-day="4" class="weekday-btn text-center py-2 rounded-2xl text-xs border">Пт</div>
-            <div onclick="toggleWeekday(5)" data-day="5" class="weekday-btn text-center py-2 rounded-2xl text-xs border">Сб</div>
-            <div onclick="toggleWeekday(6)" data-day="6" class="weekday-btn text-center py-2 rounded-2xl text-xs border">Вс</div>
+            <div onclick="toggleWeekday(0)" data-day="0" class="weekday-btn text-center py-3 rounded-3xl text-sm border font-medium">Пн</div>
+            <div onclick="toggleWeekday(1)" data-day="1" class="weekday-btn text-center py-3 rounded-3xl text-sm border font-medium">Вт</div>
+            <div onclick="toggleWeekday(2)" data-day="2" class="weekday-btn text-center py-3 rounded-3xl text-sm border font-medium">Ср</div>
+            <div onclick="toggleWeekday(3)" data-day="3" class="weekday-btn text-center py-3 rounded-3xl text-sm border font-medium">Чт</div>
+            <div onclick="toggleWeekday(4)" data-day="4" class="weekday-btn text-center py-3 rounded-3xl text-sm border font-medium">Пт</div>
+            <div onclick="toggleWeekday(5)" data-day="5" class="weekday-btn text-center py-3 rounded-3xl text-sm border font-medium">Сб</div>
+            <div onclick="toggleWeekday(6)" data-day="6" class="weekday-btn text-center py-3 rounded-3xl text-sm border font-medium">Вс</div>
           </div>
         </div>
         
         <div class="flex gap-4">
           <button type="button" onclick="hideHabitModal()" 
-                  class="flex-1 py-5 border border-white/20 dark:border-zinc-700 rounded-3xl font-medium">Отмена</button>
+                  class="flex-1 py-6 border border-zinc-300 dark:border-white/20 rounded-3xl font-medium">Отмена</button>
           <button type="submit" 
-                  class="flex-1 py-5 bg-emerald-500 text-white rounded-3xl font-medium">Сохранить</button>
+                  class="flex-1 py-6 bg-gradient-to-r from-emerald-500 to-cyan-400 text-white rounded-3xl font-semibold">Сохранить</button>
         </div>
       </form>
     </div>
@@ -310,53 +321,29 @@ input, textarea {
 
   <!-- TOAST -->
   <div id="toast" onclick="this.classList.add('hidden')" 
-       class="hidden fixed bottom-6 right-6 bg-emerald-500 text-white px-6 py-4 rounded-3xl shadow-2xl flex items-center gap-x-3">
-    <i class="fa-solid fa-check-circle"></i>
-    <span id="toast-text" class="font-medium"></span>
+       class="hidden fixed bottom-8 right-8 bg-gradient-to-r from-emerald-500 to-cyan-400 text-white px-8 py-5 rounded-3xl shadow-2xl flex items-center gap-x-3 text-base font-medium">
+    <i class="fa-solid fa-check-circle text-xl"></i>
+    <span id="toast-text"></span>
   </div>
 
   <script>
     // ====================== ДАННЫЕ ======================
     let habits = []
-    let currentDate = new Date()
     let selectedHabitId = null
-    let currentMonth = currentDate.getMonth()
-    let currentYear = currentDate.getFullYear()
+    let currentMonth = new Date().getMonth()
+    let currentYear = new Date().getFullYear()
     let selectedFrequency = 'daily'
     let selectedWeekdays = []
 
-    // ====================== LOCALSTORAGE ======================
     function loadHabits() {
       const saved = localStorage.getItem('habitflow_habits')
       if (saved) {
         habits = JSON.parse(saved)
       } else {
-        // Дефолтные привычки
         habits = [
-          {
-            id: 1,
-            name: "Выпить 2 литра воды",
-            desc: "Здоровье и энергия",
-            frequency: "daily",
-            completions: {},
-            points: 10
-          },
-          {
-            id: 2,
-            name: "Прогулка 30 минут",
-            desc: "",
-            frequency: [1, 2, 3, 4, 5],
-            completions: {},
-            points: 20
-          },
-          {
-            id: 3,
-            name: "Читать 20 страниц",
-            desc: "Личностный рост",
-            frequency: "daily",
-            completions: {},
-            points: 15
-          }
+          { id: 1, name: "Выпить 2 литра воды", desc: "Здоровье и энергия", frequency: "daily", completions: {}, points: 10 },
+          { id: 2, name: "Прогулка 30 минут", desc: "", frequency: [1, 2, 3, 4, 5], completions: { "2026-04-19": true }, points: 20 },
+          { id: 3, name: "Читать 20 страниц", desc: "Личностный рост", frequency: "daily", completions: {}, points: 15 }
         ]
         saveHabits()
       }
@@ -366,52 +353,37 @@ input, textarea {
       localStorage.setItem('habitflow_habits', JSON.stringify(habits))
     }
 
-    // ====================== УТИЛИТЫ ДАТ ======================
-    function formatDate(date) {
-      return date.toISOString().split('T')[0]
-    }
-
-    function getToday() {
-      return formatDate(new Date())
-    }
+    function formatDate(date) { return date.toISOString().split('T')[0] }
+    function getToday() { return formatDate(new Date()) }
 
     function isHabitDue(habit, dateStr) {
       const date = new Date(dateStr)
-      const dayOfWeek = date.getDay() // 0 = Sunday
-      
+      const dayOfWeek = date.getDay()
       if (habit.frequency === 'daily') return true
-      
-      // массив дней недели (0=Вс, но в UI 0=Пн → сдвиг)
-      const adjustedDay = (dayOfWeek + 6) % 7 // превращаем 0=Вс в 6, 1=Пн в 0 и т.д.
+      const adjustedDay = (dayOfWeek + 6) % 7
       return habit.frequency.includes(adjustedDay)
     }
 
     function calculateStreak(habit) {
       let streak = 0
       let checkDate = new Date()
-      
       while (true) {
         const dateStr = formatDate(checkDate)
         if (habit.completions[dateStr] === true) {
           streak++
           checkDate.setDate(checkDate.getDate() - 1)
-        } else {
-          break
-        }
+        } else break
       }
       return streak
     }
 
     function getCompletionPercent(habit) {
       const today = new Date()
-      let count = 0
-      let total = 0
-      
+      let count = 0, total = 0
       for (let i = 0; i < 30; i++) {
         const d = new Date(today)
         d.setDate(d.getDate() - i)
         const dateStr = formatDate(d)
-        
         if (isHabitDue(habit, dateStr)) {
           total++
           if (habit.completions[dateStr] === true) count++
@@ -424,134 +396,96 @@ input, textarea {
     function renderHabitsList() {
       const container = document.getElementById('habits-list')
       container.innerHTML = ''
-      
       habits.forEach(h => {
         const streak = calculateStreak(h)
         const percent = getCompletionPercent(h)
-        
         const el = document.createElement('div')
-       el.className = `
-habit-card flex items-center justify-between 
-card p-4 rounded-2xl cursor-pointer
-${selectedHabitId === h.id ? 'ring-2 ring-emerald-500' : ''}
-`
-
+        el.className = `habit-card flex items-center justify-between card p-5 rounded-3xl cursor-pointer ${selectedHabitId === h.id ? 'ring-2 ring-emerald-400' : ''}`
         el.innerHTML = `
-          <div class="flex items-center gap-x-3">
-            <input type="checkbox" 
-                   onchange="toggleTodayCompletion(${h.id}, event)"
-                   ${h.completions[getToday()] ? 'checked' : ''}
-                   class="w-5 h-5 accent-emerald-500">
+          <div class="flex items-center gap-x-4">
+            <input type="checkbox" onchange="toggleTodayCompletion(${h.id}, event)" ${h.completions[getToday()] ? 'checked' : ''} class="w-6 h-6 accent-emerald-500">
             <div>
-              <div class="font-medium">${h.name}</div>
-              ${h.desc ? `<div class="text-xs text-white/50 dark:text-zinc-500">${h.desc}</div>` : ''}
+              <div class="font-semibold">${h.name}</div>
+              ${h.desc ? `<div class="text-xs text-secondary">${h.desc}</div>` : ''}
             </div>
           </div>
-          <div class="text-right">
-            <div class="text-xs flex items-center justify-end gap-x-1 text-orange-400">
-              ${streak} <i class="fa-solid fa-fire"></i>
+          <div class="flex items-center gap-x-4">
+            <div class="text-right">
+              <div class="text-xs flex items-center gap-x-1 text-orange-400">${streak} <i class="fa-solid fa-fire"></i></div>
+              <div class="text-emerald-400">${percent}%</div>
             </div>
-            <div class="text-[10px] text-emerald-400">${percent}%</div>
+            <!-- Крестик вместо мусорки -->
+            <button onclick="deleteHabit(${h.id}); event.stopImmediatePropagation()" class="text-red-400 hover:text-red-500 text-3xl leading-none">
+              ✕
+            </button>
           </div>
         `
         el.onclick = (e) => {
-          if (e.target.type !== 'checkbox') {
+          if (e.target.type !== 'checkbox' && !e.target.closest('button')) {
             selectedHabitId = h.id
             renderAll()
           }
         }
         container.appendChild(el)
       })
-      
-      if (habits.length === 0) {
-        container.innerHTML = `<p class="text-white/40 text-center py-8">Пока нет привычек.<br>Добавьте первую!</p>`
-      }
     }
 
     function renderTodayHabits() {
       const container = document.getElementById('today-habits')
       container.innerHTML = ''
-      
       const today = getToday()
-      
       habits.forEach(h => {
         if (!isHabitDue(h, today)) return
-        
         const completed = !!h.completions[today]
-        
         const card = document.createElement('div')
-        card.className = `habit-card bg-white/5 dark:bg-white p-6 rounded-3xl flex justify-between items-center ${completed ? 'opacity-75' : ''}`
+        card.className = `habit-card card p-8 rounded-3xl flex justify-between items-start ${completed ? 'opacity-80' : ''}`
         card.innerHTML = `
-          <div>
-            <div class="font-semibold text-xl">${h.name}</div>
-            ${h.desc ? `<p class="text-sm text-white/60 dark:text-zinc-500">${h.desc}</p>` : ''}
-            <div class="flex items-center gap-x-2 mt-4 text-xs">
-              <span class="px-3 py-1 bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300 rounded-3xl">Сегодня</span>
-              ${completed ? `<span class="text-emerald-400">✓ Выполнено</span>` : ''}
-            </div>
+          <div class="flex-1">
+            <div class="font-semibold text-2xl">${h.name}</div>
+            ${h.desc ? `<p class="text-secondary mt-1">${h.desc}</p>` : ''}
           </div>
-          
-          <button onclick="toggleTodayCompletion(${h.id}); event.stopImmediatePropagation()" 
-                  class="w-12 h-12 flex items-center justify-center text-3xl ${completed ? 'text-emerald-400' : 'text-white/30 dark:text-zinc-300'}">
+          <button onclick="toggleTodayCompletion(${h.id}); event.stopImmediatePropagation()" class="text-5xl ${completed ? 'text-emerald-400' : 'text-white/30 dark:text-zinc-400'}">
             ${completed ? '✅' : '⬜'}
           </button>
         `
         container.appendChild(card)
       })
-      
-      if (container.children.length === 0) {
-        container.innerHTML = `<div class="col-span-2 text-center py-12 text-white/40">На сегодня всё! Отличная работа 🌟</div>`
-      }
+      if (!container.children.length) container.innerHTML = `<div class="text-center py-20 text-2xl text-secondary">Отличная работа! На сегодня всё 🌟</div>`
     }
 
     function renderCalendar() {
       const container = document.getElementById('calendar-grid')
       container.innerHTML = ''
-      
-      // Заголовок месяца
       const monthNames = ["Январь","Февраль","Март","Апрель","Май","Июнь","Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"]
       document.getElementById('calendar-title').textContent = `${monthNames[currentMonth]} ${currentYear}`
       
-      // Дни недели
       const weekdays = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс']
-      weekdays.forEach(day => {
+      weekdays.forEach(d => {
         const div = document.createElement('div')
-        div.className = 'text-xs font-medium text-white/40 dark:text-zinc-400 py-2'
-        div.textContent = day
+        div.className = 'text-xs font-medium text-secondary py-2'
+        div.textContent = d
         container.appendChild(div)
       })
       
-      // Первый день месяца
       const firstDay = new Date(currentYear, currentMonth, 1).getDay()
-      const adjustedFirst = (firstDay + 6) % 7 // понедельник = 0
-      
-      // Пустые ячейки
-      for (let i = 0; i < adjustedFirst; i++) {
-        const empty = document.createElement('div')
-        empty.className = 'h-10'
-        container.appendChild(empty)
-      }
+      const adjustedFirst = (firstDay + 6) % 7
+      for (let i = 0; i < adjustedFirst; i++) container.appendChild(document.createElement('div'))
       
       const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate()
-      
       const habit = habits.find(h => h.id === selectedHabitId) || habits[0]
       
       for (let day = 1; day <= daysInMonth; day++) {
         const dateObj = new Date(currentYear, currentMonth, day)
         const dateStr = formatDate(dateObj)
-        
         const cell = document.createElement('div')
-        cell.className = `calendar-day flex items-center justify-center h-10 rounded-2xl text-sm cursor-pointer hover:ring-2 hover:ring-emerald-400`
+        cell.className = `calendar-day flex items-center justify-center h-14 text-lg cursor-pointer`
         
-        if (habit && habit.completions[dateStr] === true) {
-          cell.classList.add('completed')
-        } else if (habit && isHabitDue(habit, dateStr) && habit.completions[dateStr] === false) {
-          cell.classList.add('missed')
-        } else if (habit && isHabitDue(habit, dateStr)) {
+        if (habit && habit.completions[dateStr] === true) cell.classList.add('completed')
+        else if (habit && isHabitDue(habit, dateStr) && habit.completions[dateStr] === false) cell.classList.add('missed')
+        else if (habit && isHabitDue(habit, dateStr)) {
           cell.style.backgroundColor = 'rgba(16,185,129,0.15)'
           cell.style.color = '#10b981'
         }
-        
         cell.textContent = day
         cell.onclick = () => toggleCompletionInCalendar(habit ? habit.id : null, dateStr)
         container.appendChild(cell)
@@ -559,54 +493,31 @@ ${selectedHabitId === h.id ? 'ring-2 ring-emerald-500' : ''}
     }
 
     function renderStats() {
-      // Глобальный streak
       let maxStreak = 0
-      habits.forEach(h => {
-        const s = calculateStreak(h)
-        if (s > maxStreak) maxStreak = s
-      })
-      document.getElementById('global-streak').innerHTML = `${maxStreak} <span class="text-2xl text-orange-400 streak-flame">🔥</span>`
+      habits.forEach(h => { const s = calculateStreak(h); if (s > maxStreak) maxStreak = s })
+      document.getElementById('global-streak').innerHTML = `${maxStreak} <span class="text-5xl text-orange-400 streak-flame">🔥</span>`
       
-      // Общий процент
-      let totalCompleted = 0
-      let totalPossible = 0
-      
-      habits.forEach(h => {
-        const p = getCompletionPercent(h)
-        totalCompleted += p
-      })
-      
-      const avg = habits.length ? Math.round(totalCompleted / habits.length) : 0
+      let total = 0
+      habits.forEach(h => total += getCompletionPercent(h))
+      const avg = habits.length ? Math.round(total / habits.length) : 0
       document.getElementById('completion-30').textContent = `${avg}%`
       document.getElementById('completion-bar').style.width = `${avg}%`
       
-      // Количество привычек
       document.getElementById('total-habits-count').textContent = habits.length
       document.getElementById('active-habits').textContent = habits.length
       
-      // Список прогресса
       const container = document.getElementById('stats-list')
       container.innerHTML = ''
-      
       habits.forEach(h => {
         const percent = getCompletionPercent(h)
         const streak = calculateStreak(h)
-        
         const row = document.createElement('div')
-        row.className = 'flex items-center justify-between bg-white/5 dark:bg-white/80 backdrop-blur-xl rounded-3xl px-6 py-5'
+        row.className = 'flex justify-between card rounded-3xl px-8 py-6'
         row.innerHTML = `
-          <div class="flex items-center gap-x-4">
-            <div class="font-medium">${h.name}</div>
-          </div>
-          <div class="flex items-center gap-x-8">
-            <div class="text-right">
-              <div class="text-emerald-400">${percent}%</div>
-              <div class="text-xs">за 30 дней</div>
-            </div>
-            <div class="text-right">
-              <div class="flex items-center gap-x-1 text-orange-400">${streak} <i class="fa-solid fa-fire"></i></div>
-              <div class="text-xs">streak</div>
-            </div>
+          <div class="font-semibold">${h.name}</div>
+          <div class="flex gap-12">
+            <div class="text-right"><div class="text-3xl text-emerald-400">${percent}%</div><div class="text-xs text-secondary">30 дней</div></div>
+            <div class="text-right"><div class="text-3xl text-orange-400 flex items-center">${streak} <i class="fa-solid fa-fire ml-1"></i></div><div class="text-xs text-secondary">streak</div></div>
           </div>
         `
         container.appendChild(row)
@@ -624,20 +535,18 @@ ${selectedHabitId === h.id ? 'ring-2 ring-emerald-500' : ''}
     function toggleTodayCompletion(id, e) {
       const habit = habits.find(h => h.id === id)
       if (!habit) return
-      
       const today = getToday()
-      
-      if (habit.completions[today]) {
+      const wasCompleted = !!habit.completions[today]
+
+      if (wasCompleted) {
         delete habit.completions[today]
+        subtractPoints(habit.points || 10)
       } else {
         habit.completions[today] = true
-        // Начисление очков
         addPoints(habit.points || 10)
       }
-      
       saveHabits()
       renderAll()
-      
       if (e) e.stopImmediatePropagation()
     }
 
@@ -645,14 +554,14 @@ ${selectedHabitId === h.id ? 'ring-2 ring-emerald-500' : ''}
       if (!id) return
       const habit = habits.find(h => h.id === id)
       if (!habit) return
-      
-      if (habit.completions[dateStr]) {
+      const wasCompleted = !!habit.completions[dateStr]
+      if (wasCompleted) {
         delete habit.completions[dateStr]
+        subtractPoints(habit.points || 10)
       } else {
         habit.completions[dateStr] = true
         addPoints(habit.points || 10)
       }
-      
       saveHabits()
       renderCalendar()
       renderStats()
@@ -663,7 +572,24 @@ ${selectedHabitId === h.id ? 'ring-2 ring-emerald-500' : ''}
       total += amount
       localStorage.setItem('habitflow_points', total)
       document.getElementById('total-points').textContent = total
-      showToast(`+${amount} очков!`)
+      showToast(`+${amount} очков`)
+    }
+
+    function subtractPoints(amount) {
+      let total = parseInt(localStorage.getItem('habitflow_points') || '0')
+      total = Math.max(0, total - amount)
+      localStorage.setItem('habitflow_points', total)
+      document.getElementById('total-points').textContent = total
+      showToast(`-${amount} очков`)
+    }
+
+    function deleteHabit(id) {
+      if (!confirm('Удалить привычку навсегда?')) return
+      habits = habits.filter(h => h.id !== id)
+      if (selectedHabitId === id) selectedHabitId = null
+      saveHabits()
+      renderAll()
+      showToast('Привычка удалена')
     }
 
     // ====================== МОДАЛКА ======================
@@ -672,27 +598,17 @@ ${selectedHabitId === h.id ? 'ring-2 ring-emerald-500' : ''}
       modal.classList.remove('hidden')
       modal.classList.add('flex')
       
-      document.getElementById('modal-title').textContent = editHabit ? 'Редактировать привычку' : 'Новая привычка'
+      document.getElementById('modal-title').textContent = editHabit ? 'Редактировать привычку' : 'Создать новую привычку'
       
       if (editHabit) {
         document.getElementById('edit-id').value = editHabit.id
         document.getElementById('habit-name').value = editHabit.name
         document.getElementById('habit-desc').value = editHabit.desc || ''
-        
         selectedFrequency = typeof editHabit.frequency === 'string' ? editHabit.frequency : 'weekly'
         selectedWeekdays = Array.isArray(editHabit.frequency) ? editHabit.frequency : []
-        
         document.getElementById('freq-daily').classList.toggle('border-emerald-500', selectedFrequency === 'daily')
         document.getElementById('freq-weekly').classList.toggle('border-emerald-500', selectedFrequency === 'weekly')
-        
         document.getElementById('weekdays-selector').classList.toggle('hidden', selectedFrequency !== 'weekly')
-        
-        // Подсветка выбранных дней
-        document.querySelectorAll('.weekday-btn').forEach(el => {
-          const day = parseInt(el.dataset.day)
-          el.classList.toggle('bg-emerald-500', selectedWeekdays.includes(day))
-          el.classList.toggle('text-white', selectedWeekdays.includes(day))
-        })
       } else {
         document.getElementById('habit-form').reset()
         document.getElementById('edit-id').value = ''
@@ -710,39 +626,32 @@ ${selectedHabitId === h.id ? 'ring-2 ring-emerald-500' : ''}
 
     function setFrequency(btn, type) {
       selectedFrequency = type
-      
       document.querySelectorAll('.freq-btn').forEach(b => b.classList.remove('border-emerald-500'))
       btn.classList.add('border-emerald-500')
-      
       document.getElementById('weekdays-selector').classList.toggle('hidden', type !== 'weekly')
     }
 
     function toggleWeekday(day) {
       const index = selectedWeekdays.indexOf(day)
-      if (index > -1) {
-        selectedWeekdays.splice(index, 1)
-      } else {
-        selectedWeekdays.push(day)
-      }
-      
+      if (index > -1) selectedWeekdays.splice(index, 1)
+      else selectedWeekdays.push(day)
       const el = document.querySelector(`.weekday-btn[data-day="${day}"]`)
       if (el) {
-        el.classList.toggle('bg-emerald-500')
-        el.classList.toggle('text-white')
+        const active = selectedWeekdays.includes(day)
+        el.classList.toggle('bg-emerald-500', active)
+        el.classList.toggle('text-white', active)
+        el.classList.toggle('border-emerald-500', active)
       }
     }
 
     function handleHabitSubmit(e) {
       e.preventDefault()
-      
       const id = document.getElementById('edit-id').value
       const name = document.getElementById('habit-name').value.trim()
       const desc = document.getElementById('habit-desc').value.trim()
-      
       let frequency = selectedFrequency === 'daily' ? 'daily' : [...selectedWeekdays]
       
       if (id) {
-        // Редактирование
         const habit = habits.find(h => h.id === parseInt(id))
         if (habit) {
           habit.name = name
@@ -750,121 +659,54 @@ ${selectedHabitId === h.id ? 'ring-2 ring-emerald-500' : ''}
           habit.frequency = frequency
         }
       } else {
-        // Создание
-        const newHabit = {
-          id: Date.now(),
-          name,
-          desc,
-          frequency,
-          completions: {},
-          points: 10
-        }
-        habits.push(newHabit)
+        habits.push({ id: Date.now(), name, desc, frequency, completions: {}, points: 10 })
       }
       
       saveHabits()
       hideHabitModal()
       renderAll()
-      showToast(id ? 'Привычка обновлена' : 'Привычка добавлена 🎉')
+      showToast(id ? 'Привычка обновлена' : 'Привычка добавлена!')
     }
 
-    function deleteHabit(id) {
-      if (!confirm('Удалить привычку?')) return
-      habits = habits.filter(h => h.id !== id)
-      if (selectedHabitId === id) selectedHabitId = null
-      saveHabits()
-      renderAll()
-    }
-
-    // ====================== ТАБЫ ======================
     function switchTab(n) {
       document.querySelectorAll('.tab-button').forEach((el, i) => {
         el.classList.toggle('border-emerald-500', i === n)
         el.classList.toggle('text-emerald-400', i === n)
       })
-      
       document.querySelectorAll('.tab-view').forEach(el => el.classList.add('hidden'))
       document.getElementById(`view-${n}`).classList.remove('hidden')
-      
       if (n === 1) renderCalendar()
     }
 
-    // ====================== НАВИГАЦИЯ КАЛЕНДАРЯ ======================
-    function prevMonth() {
-      currentMonth--
-      if (currentMonth < 0) {
-        currentMonth = 11
-        currentYear--
-      }
-      renderCalendar()
-    }
-    
-    function nextMonth() {
-      currentMonth++
-      if (currentMonth > 11) {
-        currentMonth = 0
-        currentYear++
-      }
-      renderCalendar()
-    }
+    function prevMonth() { currentMonth--; if (currentMonth < 0) { currentMonth = 11; currentYear-- } renderCalendar() }
+    function nextMonth() { currentMonth++; if (currentMonth > 11) { currentMonth = 0; currentYear++ } renderCalendar() }
 
-    // ====================== ТЕМА ======================
     function toggleTheme() {
-        const root = document.documentElement
-        const isDark = root.classList.toggle('dark')
-
-        localStorage.setItem('habitflow_theme', isDark ? 'dark' : 'light')
-
-        const icon = document.getElementById('theme-icon')
-        icon.className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon'
+      const root = document.documentElement
+      const isDark = root.classList.toggle('dark')
+      localStorage.setItem('habitflow_theme', isDark ? 'dark' : 'light')
+      document.getElementById('theme-icon').className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon'
     }
 
-
-    // ====================== TOAST ======================
     function showToast(text) {
       const toast = document.getElementById('toast')
-      document.getElementById('toast-text').textContent = text
+      document.getElementById('toast-text').innerHTML = text
       toast.style.display = 'flex'
-      setTimeout(() => {
-        toast.style.display = 'none'
-      }, 2800)
+      setTimeout(() => toast.style.display = 'none', 2800)
     }
 
-    // ====================== ЗАПУСК ======================
     function init() {
       loadHabits()
+      // Обнуляем очки на 0 при запуске (как просил)
+      localStorage.setItem('habitflow_points', '0')
+      document.getElementById('total-points').textContent = '0'
       
-      // Тема
-      /*
-      if (localStorage.getItem('habitflow_theme') === 'dark' || 
-          (!localStorage.getItem('habitflow_theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      if (localStorage.getItem('habitflow_theme') === 'dark') {
         document.documentElement.classList.add('dark')
         document.getElementById('theme-icon').className = 'fa-solid fa-sun'
       }
-      */
-      const savedTheme = localStorage.getItem('habitflow_theme')
-
-        if (savedTheme === 'dark') {
-        document.documentElement.classList.add('dark')
-        document.getElementById('theme-icon').className = 'fa-solid fa-sun'
-        } else {
-        document.documentElement.classList.remove('dark')
-        document.getElementById('theme-icon').className = 'fa-solid fa-moon'
-        }
-
-      
-      // Текущая дата
-      const dateEl = document.getElementById('today-date')
-      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }
-      dateEl.textContent = new Date().toLocaleDateString('ru-RU', options)
-      
-      // Очки
-      const points = localStorage.getItem('habitflow_points') || '1240'
-      document.getElementById('total-points').textContent = points
-      
+      document.getElementById('today-date').textContent = new Date().toLocaleDateString('ru-RU', { weekday: 'long', day: 'numeric', month: 'long' })
       renderAll()
-      
-      console.log('%c🚀 HabitFlow запущен. Полноценный трекер привычек готов!', 'color:#10b981; font-size:14px; font-weight:600')
     }
     
     window.onload = init
